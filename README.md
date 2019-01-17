@@ -55,34 +55,8 @@ drwxr-xr-x 1 daemon root 4096 Jan 17 13:45 ..
 -rw-r--r-- 1 daemon root 5210 Jan 17 13:45 example-openshift-read-only.bat
 ```
 
-But with multistage
 
-```
-#! docker run --rm -it myimage:multi ls -al /opt/docker/bin
-total 28
-drwxrwxr-x 2 root root 4096 Jan 17 14:57 .
-drwxr-xr-x 4 root root 4096 Jan 17 14:59 ..
--rwxrwxr-- 1 root root 9411 Jan 17 14:57 example-openshift-read-only
--rw-rw-r-- 1 root root 5210 Jan 17 14:57 example-openshift-read-only.bat
-```
-
-
----
-Regular user cannot set root group 0
-
-```
-#! chgrp 0 example-openshift-read-only
-chgrp: changing group of 'example-openshift-read-only': Operation not permitted
-```
-
-which is why the build script had `if [[ $(id -u) -eq 0 ]]; then`, only CI or sudo can produce OpenShift images
-  - which is a great reason to adopt a multistage build
----
-
-
-### multistage
-
-Would look something like this
+Multistage Dockerfile would look something like this
 
 ```dockerfile
 FROM openjdk:8-jre-slim
@@ -96,6 +70,34 @@ USER daemon
 ENTRYPOINT []
 CMD []
 ```
+
+
+and now, it works
+
+```
+#! docker run --rm -it myimage:multi ls -al /opt/docker/bin
+total 28
+drwxrwxr-x 2 root root 4096 Jan 17 14:57 .
+drwxr-xr-x 4 root root 4096 Jan 17 14:59 ..
+-rwxrwxr-- 1 root root 9411 Jan 17 14:57 example-openshift-read-only
+-rw-rw-r-- 1 root root 5210 Jan 17 14:57 example-openshift-read-only.bat
+```
+
+
+### corrections
+
+- A regular user cannot set root group 0, which is why the build script had `if [[ $(id -u) -eq 0 ]]; then`, only CI or sudo can produce OpenShift images
+    - which is a great reason to adopt a multistage build
+
+
+```
+#! chgrp 0 example-openshift-read-only
+chgrp: changing group of 'example-openshift-read-only': Operation not permitted
+```
+---
+
+### other notes
+- It pays to make sure the configuration you create works both in openshift and out, it sucks to produce an image you cant run on your local machine for development
 
 
 
