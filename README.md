@@ -1,7 +1,27 @@
 notes on openshift and sbt
 ===
 
+Dockerfile produced by this configuration
 
+```dockerfile
+FROM openjdk:8-jre-slim
+WORKDIR /opt/docker
+ADD --chown=daemon:root opt /opt
+ENV PATH="$PATH:/opt/docker/bin"
+USER daemon
+ENTRYPOINT []
+CMD []
+```
+
+```
+#! docker run --rm -it myimage example-openshift-read-only
+hello, OpenShift from daemon
+```
+
+```
+#! docker run -u9999 --rm -it myimage example-openshift-read-only
+standard_init_linux.go:190: exec user process caused "permission denied"
+```
 
 
 Executables are not group executable by default
