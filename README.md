@@ -56,3 +56,22 @@ chgrp: changing group of 'example-openshift-read-only': Operation not permitted
 which is why the build script had `if [[ $(id -u) -eq 0 ]]; then`, only CI or sudo can produce OpenShift images
   - which is a great reason to adopt a [multistage build approach](https://github.com/sbt/sbt-native-packager/issues/1189#issuecomment-454629204)
 ---
+
+
+### multistage
+
+Would look like this
+
+```dockerfile
+FROM openjdk:8-jre-slim
+WORKDIR /opt/docker
+ADD --chown=daemon:root opt /opt
+ENV PATH="$PATH:/opt/docker/bin"
+RUN chgrp -R 0 /opt && chmod -R g=u /opt
+
+FROM openjdk:8-jre-slim
+COPY --from=0 /opt/docker /opt/docker
+USER daemon
+ENTRYPOINT []
+CMD []
+```
