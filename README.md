@@ -60,13 +60,12 @@ which is why the build script had `if [[ $(id -u) -eq 0 ]]; then`, only CI or su
 
 ### multistage
 
-Would look like this
+Would look something like this
 
 ```dockerfile
 FROM openjdk:8-jre-slim
 WORKDIR /opt/docker
 ADD --chown=daemon:root opt /opt
-ENV PATH="$PATH:/opt/docker/bin"
 RUN chgrp -R 0 /opt && chmod -R g=u /opt
 
 FROM openjdk:8-jre-slim
