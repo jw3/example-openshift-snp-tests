@@ -61,7 +61,7 @@ Multistage Dockerfile would look something like this
 ```dockerfile
 FROM openjdk:8-jre-slim
 WORKDIR /opt/docker
-ADD --chown=daemon:root opt /opt
+ADD opt /opt
 RUN chgrp -R 0 /opt && chmod -R g=u /opt
 
 FROM openjdk:8-jre-slim

@@ -1,0 +1,10 @@
+FROM openjdk:8
+WORKDIR /opt/docker
+RUN id -u default || useradd --system --create-home --uid 1001 --gid 0 default
+ADD opt /opt
+RUN chmod -R g=u /opt
+
+FROM openjdk:8
+RUN id -u default || useradd --system --create-home --uid 1001 --gid 0 default
+COPY --from=0 --chown=1001:0 /opt/docker /opt/docker
+USER 1001
