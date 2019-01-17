@@ -1,6 +1,15 @@
 notes on openshift and sbt
 ===
 
+#### tl;dr;
+
+A configurable [multistage build](https://github.com/sbt/sbt-native-packager/issues/1189#issuecomment-454629204) would be ideal
+- enabled: you get a smaller image
+- disabled: you get compatiblity on earlier docker versions but at cost of larger image
+
+---
+
+
 Dockerfile produced by this configuration
 
 ```dockerfile
@@ -45,6 +54,19 @@ drwxr-xr-x 1 daemon root 4096 Jan 17 13:45 ..
 -rwxr--r-- 1 daemon root 9411 Jan 17 13:45 example-openshift-read-only
 -rw-r--r-- 1 daemon root 5210 Jan 17 13:45 example-openshift-read-only.bat
 ```
+
+But with multistage
+
+```
+#! docker run --rm -it myimage:multi ls -al /opt/docker/bin
+total 28
+drwxrwxr-x 2 root root 4096 Jan 17 14:57 .
+drwxr-xr-x 4 root root 4096 Jan 17 14:59 ..
+-rwxrwxr-- 1 root root 9411 Jan 17 14:57 example-openshift-read-only
+-rw-rw-r-- 1 root root 5210 Jan 17 14:57 example-openshift-read-only.bat
+```
+
+
 ---
 Regular user cannot set root group 0
 
@@ -54,7 +76,7 @@ chgrp: changing group of 'example-openshift-read-only': Operation not permitted
 ```
 
 which is why the build script had `if [[ $(id -u) -eq 0 ]]; then`, only CI or sudo can produce OpenShift images
-  - which is a great reason to adopt a [multistage build approach](https://github.com/sbt/sbt-native-packager/issues/1189#issuecomment-454629204)
+  - which is a great reason to adopt a multistage build
 ---
 
 
@@ -74,6 +96,7 @@ USER daemon
 ENTRYPOINT []
 CMD []
 ```
+
 
 
 ### versions and features
