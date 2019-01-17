@@ -74,3 +74,10 @@ USER daemon
 ENTRYPOINT []
 CMD []
 ```
+
+
+### versions and features
+- Multistage added in 17.05 https://docs.docker.com/develop/develop-images/multistage-build/
+- chown on add added in 17.09 https://github.com/docker/docker-ce/releases/tag/v17.09.0-ce
+- the latest openshift, v3.11, at 1.13 https://docs.openshift.com/container-platform/3.11/release_notes/ocp_3_11_release_notes.html#ocp-311-about-this-release
+
